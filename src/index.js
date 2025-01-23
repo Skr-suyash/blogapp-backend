@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
 
 require('./db.js');
 
@@ -12,6 +13,10 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+const fname = path.join(__dirname, '../uploads');
+app.use(express.static(fname));
+console.log(fname);
 
 app.use(userRouter);
 app.use(blogRouter);

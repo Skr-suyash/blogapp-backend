@@ -1,19 +1,20 @@
 const express = require('express');
-const multer = require('multer');
 const router = new express.Router();
-const upload = multer({ dest: 'uploads/' })
+const upload = require('../middleware/multer');
 
 const blogModel = require('../models/BlogModel');
 const userModel = require('../models/UserModel');
 
-router.post('/create-blog', async (req, res) => {
-    let { title, author, image, email, content } = req.body;
+router.post('/create-blog', upload.single('image'), async (req, res) => {
+    let { title, author, email, content } = req.body;
 
     const date = new Date();
     let day = date.getDate();
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
     let currentDate = `${day}-${month}-${year}`;
+
+    const image = req.file.filename;
 
     let blog = await blogModel.create({
         title: title,
@@ -24,7 +25,6 @@ router.post('/create-blog', async (req, res) => {
         date_created: currentDate,
     });
     res.status(200).json(blog);
-
 });
 
 router.get('/blogs', async (req, res) => {
@@ -80,11 +80,5 @@ router.delete('/blogs/delete/:id', async (req, res) => {
         res.status(404).send('Item not found');
     }
 });
-
-router.post('/upload',upload.single('file'),(req,res)=>{
-
-    console.log(req.body);
-    res.send('hellp');
-})
 
 module.exports = router;
