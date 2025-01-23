@@ -1,10 +1,14 @@
-const express = require('express');
-const router = new express.Router();
+const mongoose = require('mongoose');
 
-const userModel = require('../models/BlogModel');
-
-router.get('/blogs', (req, res) => {
-    
+const blogSchema = mongoose.Schema({
+    "title": String,
+    "email": String,
+    "author": String,
+    "image": String,
+    "content": String,
+    "date_created": String,
 });
 
-module.exports = router;
+const blogModel = new mongoose.model('nlog', blogSchema);
+
+module.exports = blogModel;
