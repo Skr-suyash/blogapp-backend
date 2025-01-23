@@ -81,10 +81,4 @@ router.delete('/blogs/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/upload', upload.single('file'), (req, res) => {
-    // Handle the uploaded file
-    console.log(req.file)
-    res.send(req.body);
-});
-
 module.exports = router;
