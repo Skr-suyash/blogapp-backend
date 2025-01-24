@@ -52,7 +52,7 @@ router.patch('/blogs/:id', async (req, res) => {
     const id = req.params.id;
     const { title, content } = req.body;
     if (title) {
-        await blogModel.updateOne({_id : id}, {
+        await blogModel.updateOne({ _id: id }, {
             $set: {
                 title: title,
             }
@@ -60,7 +60,7 @@ router.patch('/blogs/:id', async (req, res) => {
     }
     if (content) {
         console.log(title, content);
-        await blogModel.updateOne({_id : id}, {
+        await blogModel.updateOne({ _id: id }, {
             $set: {
                 content: content,
             }
@@ -72,7 +72,7 @@ router.patch('/blogs/:id', async (req, res) => {
 router.delete('/blogs/delete/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        blogModel.deleteOne({
+        await blogModel.deleteOne({
             _id: id,
         });
         res.status(200).send('Item deleted sucessfully');
@@ -80,5 +80,56 @@ router.delete('/blogs/delete/:id', async (req, res) => {
         res.status(404).send('Item not found');
     }
 });
+
+router.post('/blogs/upvote', async (req, res) => {
+    const { blog_id, email } = req.body;
+    try {
+        const blog = await blogModel.findOne({ _id: blog_id }); // Await the result of findOne
+        if (!blog) {
+            return res.status(404).send("Blog not found");
+        }
+
+        let found = blog.upvoters.includes(email);
+
+        if (found) {
+            let updatedUpvoters = blog.upvoters.filter((element) => element != email); // Remove user_id from upvoters
+            await blogModel.updateOne(
+                { _id: blog_id },
+                {
+                    $inc: {
+                        upvotes: -1,
+                    },
+                    $set: {
+                        upvoters: updatedUpvoters,
+                    },
+                }
+            );
+            return res.status(200).send({ message: "Upvote removed successfully", upvotes: blog.upvotes - 1 });
+        } else {
+            let updatedUpvoters = [...blog.upvoters, email]; // Add user_id to upvoters array
+            await blogModel.updateOne(
+                { _id: blog_id },
+                {
+                    $inc: {
+                        upvotes: +1,
+                    },
+                    $set: {
+                        upvoters: updatedUpvoters,
+                    },
+                }
+            );
+            return res.status(200).send({ message: "Upvoted successfully", upvotes: blog.upvotes + 1 });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+});
+
+// router.post('/blogs/upvote', (req, res) => {
+//     const { id } = req.body;
+//     const 
+// });
 
 module.exports = router;
