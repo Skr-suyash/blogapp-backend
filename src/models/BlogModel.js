@@ -6,6 +6,11 @@ const blogSchema = mongoose.Schema({
     "author": String,
     "image": String,
     "content": String,
+    "upvoters": Array,
+    "upvotes": {
+        type: Number,
+        default: 0,
+    },
     "date_created": String,
 });
 
