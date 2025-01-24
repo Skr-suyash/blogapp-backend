@@ -127,9 +127,4 @@ router.post('/blogs/upvote', async (req, res) => {
 
 });
 
-// router.post('/blogs/upvote', (req, res) => {
-//     const { id } = req.body;
-//     const 
-// });
-
 module.exports = router;
