@@ -6,25 +6,37 @@ const blogModel = require('../models/BlogModel');
 const userModel = require('../models/UserModel');
 
 router.post('/create-blog', upload.single('image'), async (req, res) => {
-    let { title, author, email, content } = req.body;
+    let { title, email, content } = req.body;
 
-    const date = new Date();
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-    let currentDate = `${day}-${month}-${year}`;
+    const user = await userModel.findOne({ email: email });
 
-    const image = req.file.filename;
+    console.log(user);
+    if (user) {
+        const date = new Date();
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        let currentDate = `${day}-${month}-${year}`;
 
-    let blog = await blogModel.create({
-        title: title,
-        author: author,
-        image: image,
-        email: email,
-        content: content,
-        date_created: currentDate,
-    });
-    res.status(200).json(blog);
+        let image;
+        if (req.file) {
+            image = req.file.filename;
+        }
+
+        console.log(user.username);
+        let blog = await blogModel.create({
+            title: title,
+            author: user.username,
+            image: image,
+            email: email,
+            content: content,
+            date_created: currentDate,
+        });
+        res.status(200).json(blog);
+    }
+    else {
+        res.status(404).send("user not found");
+    }
 });
 
 router.get('/blogs', async (req, res) => {
