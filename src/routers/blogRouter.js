@@ -1,11 +1,12 @@
 const express = require('express');
 const router = new express.Router();
 const upload = require('../middleware/multer');
+const axios = require('axios');
 
 const blogModel = require('../models/BlogModel');
 const userModel = require('../models/UserModel');
 
-router.post('/create-blog', upload.single('image'), async (req, res) => {
+router.post('/create-blog', upload.single('file'), async (req, res) => {
     let { title, email, content } = req.body;
 
     const user = await userModel.findOne({ email: email });
@@ -18,16 +19,16 @@ router.post('/create-blog', upload.single('image'), async (req, res) => {
         let year = date.getFullYear();
         let currentDate = `${day}-${month}-${year}`;
 
-        let image;
+        let base64Image;
         if (req.file) {
-            image = req.file.filename;
+            base64Image = req.file.buffer.toString('base64');
         }
 
         console.log(user.username);
         let blog = await blogModel.create({
             title: title,
             author: user.username,
-            image: image,
+            file: base64Image,
             email: email,
             content: content,
             date_created: currentDate,

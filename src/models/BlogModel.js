@@ -4,7 +4,7 @@ const blogSchema = mongoose.Schema({
     "title": String,
     "email": String,
     "author": String,
-    "image": String,
+    "file": String,
     "content": String,
     "upvoters": Array,
     "upvotes": {
