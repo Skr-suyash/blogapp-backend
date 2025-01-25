@@ -3,7 +3,8 @@
  */
 
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const connectionURL = `mongodb://127.0.0.1:27017/blog-app-db`;
+const connectionURL = process.env.DB_URL;
 
 mongoose.connect(connectionURL);
